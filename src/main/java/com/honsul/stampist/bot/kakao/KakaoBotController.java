@@ -34,12 +34,12 @@ public class KakaoBotController {
   @Autowired
   private StampistMessagePublisher messagePublisher;
   
-  //@GetMapping("keyboard") 
+  @GetMapping("keyboard") 
   public Keyboard keyboard() {
     return TEXT_KEYBOARD;
   }
   
-  @GetMapping("keyboard") 
+  //@GetMapping("keyboard") 
   public Keyboard buttonKeyboard() {
     return BUTTON_KEYOARD;
   }  
