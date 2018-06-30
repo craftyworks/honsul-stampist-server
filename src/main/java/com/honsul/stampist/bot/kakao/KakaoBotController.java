@@ -56,8 +56,10 @@ public class KakaoBotController {
       case 확인:
         break;
       case 버튼:
+        response = keyboardResponse(Keyboard.BUTTON_KEYOARD);
         break;
       case 키보드:
+        response = keyboardResponse(Keyboard.TEXT_KEYBOARD);
         break;
       default:
         response = defaultResponse(request);
@@ -67,6 +69,10 @@ public class KakaoBotController {
 
   }
 
+  private ResponseMessage keyboardResponse(Keyboard keyboard) {
+    return getTextResponseMessage(keyboard.getType().name(), keyboard);
+  }
+  
   private ResponseMessage stampStartWorking(RequestMessage request) {
     messagePublisher.publishStampMessage(new StartWorkingStamp(request.getUserKey()));
     return getTextResponseMessage("출근도장 찍었습니다.", Keyboard.TEXT_KEYBOARD);
