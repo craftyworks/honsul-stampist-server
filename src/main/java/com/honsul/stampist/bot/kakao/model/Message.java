@@ -2,6 +2,7 @@ package com.honsul.stampist.bot.kakao.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 
@@ -10,5 +11,6 @@ import lombok.Data;
 public class Message {
   String text;
   Photo photo;
-  MessageButton message_button;
+  @JsonProperty("message_button")
+  MessageButton messageButton;
 }
