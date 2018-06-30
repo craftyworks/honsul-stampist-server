@@ -1,6 +1,9 @@
 package com.honsul.stampist.bot.kakao;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,35 +22,26 @@ import com.honsul.stampist.server.websocket.StampistMessagePublisher;
 @RestController
 @RequestMapping("/bot/kakao/")
 public class KakaoBotController {
-  
-  private final static Keyboard TEXT_KEYBOARD;
-  private final static Keyboard BUTTON_KEYOARD;
-  
-  static {
-    TEXT_KEYBOARD = Keyboard.of("text");
-    
-    BUTTON_KEYOARD = new Keyboard();
-    BUTTON_KEYOARD.setType("button");
-    BUTTON_KEYOARD.setButtons(new String[]{"출근", "퇴근", "토큰"});
-  }
+  private static final Logger logger = LoggerFactory.getLogger(KakaoBotController.class);
   
   @Autowired
   private StampistMessagePublisher messagePublisher;
   
   @GetMapping("keyboard") 
   public Keyboard keyboard() {
-    return TEXT_KEYBOARD;
+    return Keyboard.TEXT_KEYBOARD;
   }
   
   //@GetMapping("keyboard") 
   public Keyboard buttonKeyboard() {
-    return BUTTON_KEYOARD;
+    return Keyboard.BUTTON_KEYOARD;
   }  
 
   @PostMapping("message")
   public ResponseMessage message(@RequestBody RequestMessage request) {
     ResponseMessage response = null;
     
+    logger.info("message({}, {}, {})", request.getType(), request.getUserKey(), request.getContent());
     TextCommand command = TextCommand.getCommand(request.getContent());
     switch(command) {
       case 출근:
@@ -59,6 +53,12 @@ public class KakaoBotController {
       case 토큰:
         response = tokenResponse(request);
         break;
+      case 확인:
+        break;
+      case 버튼:
+        break;
+      case 키보드:
+        break;
       default:
         response = defaultResponse(request);
         break;
@@ -69,20 +69,20 @@ public class KakaoBotController {
 
   private ResponseMessage stampStartWorking(RequestMessage request) {
     messagePublisher.publishStampMessage(new StartWorkingStamp(request.getUserKey()));
-    return getTextResponseMessage("출근도장 찍었습니다.", TEXT_KEYBOARD);
+    return getTextResponseMessage("출근도장 찍었습니다.", Keyboard.TEXT_KEYBOARD);
   }
 
   private ResponseMessage stampStopWorking(RequestMessage request) {
     messagePublisher.publishStampMessage(new StopWorkingStamp(request.getUserKey()));
-    return getTextResponseMessage("퇴근도장 찍었습니다.", TEXT_KEYBOARD);
+    return getTextResponseMessage("퇴근도장 찍었습니다.", Keyboard.TEXT_KEYBOARD);
   }
 
   private ResponseMessage tokenResponse(RequestMessage request) {
-    return getTextResponseMessage("인증토큰 : " + request.getUserKey(), TEXT_KEYBOARD);
+    return getTextResponseMessage("인증토큰 : " + request.getUserKey(), Keyboard.TEXT_KEYBOARD);
   }
   
   private ResponseMessage defaultResponse(RequestMessage request) {
-    return getTextResponseMessage(request.getContent() + " 는 올바르지 않은 명령입니다.", BUTTON_KEYOARD);
+    return getTextResponseMessage(request.getContent() + " 는 올바르지 않은 명령입니다.", Keyboard.BUTTON_KEYOARD);
   }
   
   private ResponseMessage getTextResponseMessage(String text, Keyboard keyboard) {
@@ -95,5 +95,10 @@ public class KakaoBotController {
     
     return response;
   }
+  
+  @ExceptionHandler(value = RuntimeException.class)  
+  public ResponseMessage handleError(RuntimeException e){  
+      return getTextResponseMessage(String.format("시스템에 문제가 발생하여 처리할 수 없습니다. [%s]", e.getClass().getSimpleName()), Keyboard.TEXT_KEYBOARD);  
+  } 
 
 }

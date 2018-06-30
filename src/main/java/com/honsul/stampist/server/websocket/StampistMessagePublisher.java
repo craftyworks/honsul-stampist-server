@@ -9,7 +9,7 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.stereotype.Component;
 
-import com.honsul.stampist.core.StampistException;
+import com.honsul.stampist.core.exception.WebSocketUserNotFoundException;
 import com.honsul.stampist.core.message.StampMessage;
 import com.honsul.stampist.server.model.WebSocketUser;
 
@@ -26,8 +26,7 @@ public class StampistMessagePublisher {
   public void publishStampMessage(StampMessage stamp) {
     WebSocketUser user = repository.findByUserToken(stamp.getToken());
     if(user == null) {
-      logger.info("repository tokens : {}", repository.allTokens());
-      throw new StampistException(String.format("Token ID %s 에 해당하는 사용자 발견하지 못함.", stamp.getToken()));
+      throw new WebSocketUserNotFoundException(String.format("Token ID %s 에 해당하는 사용자 발견하지 못함.", stamp.getToken()));
     }
 
     logger.info("publishing stamp[{}] order to user[{}]", stamp, user);
