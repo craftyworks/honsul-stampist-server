@@ -1,11 +1,8 @@
 package com.honsul.stampist.bot.kakao;
 
-import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,13 +24,6 @@ import com.honsul.stampist.server.websocket.StampistMessagePublisher;
 public class KakaoBotController {
   private static final Logger logger = LoggerFactory.getLogger(KakaoBotController.class);
   
-  /**
-   * 카카오 유저키를 Stampist WebSocket 통신을 위한 Access Token 으로 변환.
-   */
-  public static String getWebSocketToken(String userKey) {
-    return Base64Utils.encodeToString(String.valueOf(Objects.hash(userKey, "stampist")).getBytes()).toUpperCase();
-  }
-
   @Autowired
   private StampistMessagePublisher messagePublisher;
   
@@ -85,17 +75,17 @@ public class KakaoBotController {
   }
   
   private ResponseMessage stampStartWorking(RequestMessage request) {
-    messagePublisher.publishStampMessage(new StartWorkingStamp(request.getUserKey()));
+    messagePublisher.publishStampMessage(new StartWorkingStamp(request.getAccessToken()));
     return getTextResponseMessage("출근도장 찍었습니다. (꺄아)", Keyboard.TEXT_KEYBOARD);
   }
 
   private ResponseMessage stampStopWorking(RequestMessage request) {
-    messagePublisher.publishStampMessage(new StopWorkingStamp(request.getUserKey()));
+    messagePublisher.publishStampMessage(new StopWorkingStamp(request.getAccessToken()));
     return getTextResponseMessage("퇴근도장 찍었습니다. (굿)", Keyboard.TEXT_KEYBOARD);
   }
 
   private ResponseMessage tokenResponse(RequestMessage request) {
-    return getTextResponseMessage("(심각) 인증토큰 : " + getWebSocketToken(request.getUserKey()), Keyboard.TEXT_KEYBOARD);
+    return getTextResponseMessage("(심각) 인증토큰 : " + request.getAccessToken(), Keyboard.TEXT_KEYBOARD);
   }
   
   private ResponseMessage defaultResponse(RequestMessage request) {
