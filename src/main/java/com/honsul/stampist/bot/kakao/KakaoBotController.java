@@ -86,20 +86,20 @@ public class KakaoBotController {
   
   private ResponseMessage stampStartWorking(RequestMessage request) {
     messagePublisher.publishStampMessage(new StartWorkingStamp(request.getUserKey()));
-    return getTextResponseMessage("출근도장 찍었습니다.", Keyboard.TEXT_KEYBOARD);
+    return getTextResponseMessage("출근도장 찍었습니다. (꺄아)", Keyboard.TEXT_KEYBOARD);
   }
 
   private ResponseMessage stampStopWorking(RequestMessage request) {
     messagePublisher.publishStampMessage(new StopWorkingStamp(request.getUserKey()));
-    return getTextResponseMessage("퇴근도장 찍었습니다.", Keyboard.TEXT_KEYBOARD);
+    return getTextResponseMessage("퇴근도장 찍었습니다. (굿)", Keyboard.TEXT_KEYBOARD);
   }
 
   private ResponseMessage tokenResponse(RequestMessage request) {
-    return getTextResponseMessage("인증토큰 : " + getWebSocketToken(request.getUserKey()), Keyboard.TEXT_KEYBOARD);
+    return getTextResponseMessage("(심각) 인증토큰 : " + getWebSocketToken(request.getUserKey()), Keyboard.TEXT_KEYBOARD);
   }
   
   private ResponseMessage defaultResponse(RequestMessage request) {
-    return getTextResponseMessage(request.getContent() + " 는 올바르지 않은 명령입니다.", Keyboard.BUTTON_KEYOARD);
+    return getTextResponseMessage("올바르지 않아! (열받아)", Keyboard.BUTTON_KEYOARD);
   }
   
   private ResponseMessage getTextResponseMessage(String text, Keyboard keyboard) {
@@ -115,7 +115,7 @@ public class KakaoBotController {
   
   @ExceptionHandler(value = RuntimeException.class)  
   public ResponseMessage handleError(RuntimeException e){  
-      return getTextResponseMessage(String.format("시스템에 문제가 발생하여 처리할 수 없습니다. [%s]", e.getClass().getSimpleName()), Keyboard.TEXT_KEYBOARD);  
+      return getTextResponseMessage(String.format("시스템에 문제가 발생하여 처리할 수 없습니다. [%s]", e.getClass().getSimpleName() + " (푸하하)"), Keyboard.TEXT_KEYBOARD);  
   } 
 
 }
