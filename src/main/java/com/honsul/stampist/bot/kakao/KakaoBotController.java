@@ -1,8 +1,11 @@
 package com.honsul.stampist.bot.kakao;
 
+import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +27,13 @@ import com.honsul.stampist.server.websocket.StampistMessagePublisher;
 public class KakaoBotController {
   private static final Logger logger = LoggerFactory.getLogger(KakaoBotController.class);
   
+  /**
+   * 카카오 유저키를 Stampist WebSocket 통신을 위한 Access Token 으로 변환.
+   */
+  public static String getWebSocketToken(String userKey) {
+    return Base64Utils.encodeToString(String.valueOf(Objects.hash(userKey, "stampist")).getBytes()).toUpperCase();
+  }
+
   @Autowired
   private StampistMessagePublisher messagePublisher;
   
@@ -65,6 +75,7 @@ public class KakaoBotController {
         response = defaultResponse(request);
         break;
     }
+    logger.info("response : {}", response);
     return response;
 
   }
@@ -84,7 +95,7 @@ public class KakaoBotController {
   }
 
   private ResponseMessage tokenResponse(RequestMessage request) {
-    return getTextResponseMessage("인증토큰 : " + request.getUserKey(), Keyboard.TEXT_KEYBOARD);
+    return getTextResponseMessage("인증토큰 : " + getWebSocketToken(request.getUserKey()), Keyboard.TEXT_KEYBOARD);
   }
   
   private ResponseMessage defaultResponse(RequestMessage request) {
