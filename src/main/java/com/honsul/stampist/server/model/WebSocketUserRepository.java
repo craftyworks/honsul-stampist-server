@@ -1,4 +1,4 @@
-package com.honsul.stampist.server.websocket;
+package com.honsul.stampist.server.model;
 
 import java.util.Map;
 import java.util.Map.Entry;

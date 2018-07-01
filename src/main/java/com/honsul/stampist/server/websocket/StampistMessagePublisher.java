@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import com.honsul.stampist.core.exception.WebSocketUserNotFoundException;
 import com.honsul.stampist.core.message.StampMessage;
 import com.honsul.stampist.server.model.WebSocketUser;
+import com.honsul.stampist.server.model.WebSocketUserRepository;
 
 @Component
 public class StampistMessagePublisher {

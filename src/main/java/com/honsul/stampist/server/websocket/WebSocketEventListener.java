@@ -13,6 +13,7 @@ import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import com.honsul.stampist.server.model.WebSocketUser;
+import com.honsul.stampist.server.model.WebSocketUserRepository;
 
 @Component
 public class WebSocketEventListener {

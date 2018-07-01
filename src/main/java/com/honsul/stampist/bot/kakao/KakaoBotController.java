@@ -15,8 +15,10 @@ import com.honsul.stampist.bot.kakao.model.Keyboard;
 import com.honsul.stampist.bot.kakao.model.Message;
 import com.honsul.stampist.bot.kakao.model.RequestMessage;
 import com.honsul.stampist.bot.kakao.model.ResponseMessage;
+import com.honsul.stampist.core.message.StampStatusMessage;
 import com.honsul.stampist.core.message.StartWorkingStamp;
 import com.honsul.stampist.core.message.StopWorkingStamp;
+import com.honsul.stampist.server.model.StampStatusRepository;
 import com.honsul.stampist.server.websocket.StampistMessagePublisher;
 
 @RestController
@@ -26,6 +28,9 @@ public class KakaoBotController {
   
   @Autowired
   private StampistMessagePublisher messagePublisher;
+  
+  @Autowired
+  private StampStatusRepository stampStatusRepository;
   
   @GetMapping("keyboard") 
   public Keyboard keyboard() {
@@ -54,6 +59,7 @@ public class KakaoBotController {
         response = tokenResponse(request);
         break;
       case 확인:
+        response = stampStatus(request);
         break;
       case 버튼:
         response = keyboardResponse(Keyboard.BUTTON_KEYOARD);
@@ -84,8 +90,18 @@ public class KakaoBotController {
     return getTextResponseMessage("퇴근도장 찍었습니다. (굿)", Keyboard.TEXT_KEYBOARD);
   }
 
+  private ResponseMessage stampStatus(RequestMessage request) {
+    StampStatusMessage message = stampStatusRepository.findByUserToken(request.getAccessToken());
+    
+    String text = message == null 
+        ? "출퇴근 정보가 존재하지 않습니다. (짜증)" 
+        : String.format("출근 : %s\n퇴근 : %s (컴온)", message.getStartWorking(), message.getStopWorking());
+    
+    return getTextResponseMessage(text, Keyboard.TEXT_KEYBOARD);
+  }
+  
   private ResponseMessage tokenResponse(RequestMessage request) {
-    return getTextResponseMessage("(심각) 인증토큰 : " + request.getAccessToken(), Keyboard.TEXT_KEYBOARD);
+    return getTextResponseMessage("인증토큰 : " + request.getAccessToken(), Keyboard.TEXT_KEYBOARD);
   }
   
   private ResponseMessage defaultResponse(RequestMessage request) {
