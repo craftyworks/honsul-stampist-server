@@ -95,7 +95,7 @@ public class KakaoBotController {
     
     String text = message == null 
         ? "잘 모르겠어 (짜증)" 
-        : String.format("출근 : %s\n퇴근 : %s", message.getStartWorking(), message.getStopWorking());
+        : String.format("Date %s\n출근체크 %s\n퇴근체크 %s", message.getDate(), message.getStartWorking(), message.getStopWorking());
     
     return getTextResponseMessage(text, Keyboard.TEXT_KEYBOARD);
   }
