@@ -94,7 +94,7 @@ public class KakaoBotController {
         ? "잘 모르겠어 (짜증)" 
         : String.format("Date %s\n출근체크 %s\n퇴근체크 %s", message.getDate(), message.getStartWorking(), message.getStopWorking());
     */
-    String text = "사내 정보보호 규정이 겁나 서비스 접는다. (부르르)";
+    String text = "정보보호 규정이 겁나서 일 접었다. (부르르)";
     return getTextResponseMessage(text, Keyboard.TEXT_KEYBOARD);
   }
   
