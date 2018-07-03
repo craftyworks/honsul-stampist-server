@@ -15,9 +15,6 @@ import com.honsul.stampist.bot.kakao.model.Keyboard;
 import com.honsul.stampist.bot.kakao.model.Message;
 import com.honsul.stampist.bot.kakao.model.RequestMessage;
 import com.honsul.stampist.bot.kakao.model.ResponseMessage;
-import com.honsul.stampist.core.message.StampStatusMessage;
-import com.honsul.stampist.core.message.StartWorkingStamp;
-import com.honsul.stampist.core.message.StopWorkingStamp;
 import com.honsul.stampist.server.model.StampStatusRepository;
 import com.honsul.stampist.server.websocket.StampistMessagePublisher;
 
@@ -81,22 +78,23 @@ public class KakaoBotController {
   }
   
   private ResponseMessage stampStartWorking(RequestMessage request) {
-    messagePublisher.publishStampMessage(new StartWorkingStamp(request.getAccessToken()));
-    return getTextResponseMessage("출근도장 찍었어", Keyboard.TEXT_KEYBOARD);
+    //messagePublisher.publishStampMessage(new StartWorkingStamp(request.getAccessToken()));
+    return getTextResponseMessage("출근도장 찍었어 (굿)", Keyboard.TEXT_KEYBOARD);
   }
 
   private ResponseMessage stampStopWorking(RequestMessage request) {
-    messagePublisher.publishStampMessage(new StopWorkingStamp(request.getAccessToken()));
-    return getTextResponseMessage("퇴근도장 찍었어", Keyboard.TEXT_KEYBOARD);
+    //messagePublisher.publishStampMessage(new StopWorkingStamp(request.getAccessToken()));
+    return getTextResponseMessage("퇴근도장 찍었어 (꺄아)", Keyboard.TEXT_KEYBOARD);
   }
 
   private ResponseMessage stampStatus(RequestMessage request) {
-    StampStatusMessage message = stampStatusRepository.findByUserToken(request.getAccessToken());
-    
+    //StampStatusMessage message = stampStatusRepository.findByUserToken(request.getAccessToken());
+    /*
     String text = message == null 
         ? "잘 모르겠어 (짜증)" 
         : String.format("Date %s\n출근체크 %s\n퇴근체크 %s", message.getDate(), message.getStartWorking(), message.getStopWorking());
-    
+    */
+    String text = "사내 정보보호 규정이 겁나 서비스 접는다. (부르르)";
     return getTextResponseMessage(text, Keyboard.TEXT_KEYBOARD);
   }
   
@@ -105,7 +103,7 @@ public class KakaoBotController {
   }
   
   private ResponseMessage defaultResponse(RequestMessage request) {
-    return getTextResponseMessage("올바르지 않아! (열받아)", Keyboard.BUTTON_KEYOARD);
+    return getTextResponseMessage("올바르지 않아! (열받아)", Keyboard.TEXT_KEYBOARD);
   }
   
   private ResponseMessage getTextResponseMessage(String text, Keyboard keyboard) {
